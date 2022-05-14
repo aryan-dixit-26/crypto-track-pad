@@ -19,6 +19,7 @@ import headerContext from "../contexts/headerContext";
 import axios from "axios";
 import { makeStyles } from "@material-ui/styles";
 import { useNavigate } from "react-router-dom";
+import { numberWithCommas } from "./Banner/Carousel";
 
 const darkTheme = createTheme({
   palette: {
@@ -29,16 +30,16 @@ const darkTheme = createTheme({
   },
 });
 
-const useStyles = makeStyles(()=>({
-    row : {
-        backgroundColor : "#16171a",
-        cursor : "pointer",
-        "&:hover" : {
-            backgroundColor : "#131111"
-        },
-        fontFamily : "Montserrat",
-    }
-}))
+const useStyles = makeStyles(() => ({
+  row: {
+    backgroundColor: "#16171a",
+    cursor: "pointer",
+    "&:hover": {
+      backgroundColor: "#131111",
+    },
+    fontFamily: "Montserrat",
+  },
+}));
 
 const CoinsTable = () => {
   const [coins, setCoins] = useState([]);
@@ -50,8 +51,7 @@ const CoinsTable = () => {
   const fetchData = async () => {
     setLoading(true);
     const { data } = await axios.get(CoinList(currency));
-    console.log(data);
-    setCoins(() => data);
+    setCoins(data);
     setLoading(false);
   };
 
@@ -60,11 +60,13 @@ const CoinsTable = () => {
   }, [currency]);
 
   const handleSearch = () => {
-    return coins.filter((coin)=>{
-        coin.name.toLowerCase().includes(search) || 
-        coin.symbol.toLowerCase().includes(search) 
-    })
-  }
+    return coins.filter(
+      (coin) =>
+        coin.name.toLowerCase().includes(search) ||
+        coin.symbol.toLowerCase().includes(search)
+    );
+    // return coins;
+  };
 
   return (
     <ThemeProvider theme={darkTheme}>
@@ -80,7 +82,7 @@ const CoinsTable = () => {
           variant="outlined"
           style={{ width: "100%", marginBottom: 22 }}
           onChange={(e) => {
-            setSearch((prev) => e.target.value);
+            setSearch(e.target.value);
           }}
         />
 
@@ -100,7 +102,7 @@ const CoinsTable = () => {
                           fontFamily: "Montserrat",
                         }}
                         key={head}
-                        align={ head === "Coin" ? "" : "right"}
+                        align={head === "Coin" ? "" : "right"}
                       >
                         {head}
                       </TableCell>
@@ -109,31 +111,69 @@ const CoinsTable = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
+                {handleSearch().map((row) => {
+                    let profit = row.price_change_percentage_24h >= 0;
+                  return (
+                    <TableRow
+                      onClick={() => {
+                        navigate(`/coins/${row.id}`);
+                      }}
+                      className={classes.row}
+                      key={row.name}
+                    >
+                      <TableCell
+                        component="th"
+                        scope="row"
+                        style={{
+                          display: "flex",
+                          gap: 15,
+                        }}
+                      >
+                        <img
+                          src={row?.image}
+                          height="50"
+                          alt={row.name}
+                          style={{ marginBottom: "10px" }}
+                        />
 
-                  {
-                      handleSearch().map((row) =>{
+                        <div
+                          style={{ display: "flex", flexDirection: "column" }}
+                        >
+                          <span
+                            style={{ textTransform: "uppercase", fontSize: 22 }}
+                          >
+                            {row.symbol}
+                          </span>
+                          <span style={{color : "darkgray"}}>
+                            {row.name}
+                          </span>
+                        </div>
+                      </TableCell>
 
+                       <TableCell
+                       align="right"
+                       >
+                           {symbol}{" "}
+                           {numberWithCommas(row.current_price.toFixed(2))}
+                        </TableCell> 
 
-                        return (
-
-                            <TableRow 
-                            onClick={()=>{navigate(`/coins/${row.id}`)}}
-                            className={classes.row}
-                            key={row.name}
+                        <TableCell align="right">
+                            <span
+                            style={{
+                                color: profit > 0 ? "rgb(14, 203, 129)" : "red",
+                                fontWeight: 500,
+                              }}
                             >
-
-                            </TableRow>
-
-
-
-
-                        )
-
-
-
-                      })
-                  }
-                
+                                {profit && "+"}
+                                {row.price_change_percentage_24h.toFixed(2)}%
+                            </span>
+                        </TableCell>
+                            <TableCell align="right">
+                              {row.market_cap.toString().slice(0,-6)}
+                            </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           )}
