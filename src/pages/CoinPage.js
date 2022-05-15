@@ -73,7 +73,7 @@ const CoinPage = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  });
 
   const classes = useStyles();
 
