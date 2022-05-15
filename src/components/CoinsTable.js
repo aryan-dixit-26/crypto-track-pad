@@ -55,14 +55,16 @@ const CoinsTable = () => {
   const [page, setPage] = useState(1);
   const classes = useStyles();
   const navigate = useNavigate();
-  const fetchData = async () => {
-    setLoading(true);
-    const { data } = await axios.get(CoinList(currency));
-    setCoins(data);
-    setLoading(false);
-  };
+
 
   useEffect(() => {
+       // eslint-disable-next-line react-hooks/exhaustive-deps
+       const fetchData = async () => {
+        setLoading(true);
+        const { data } = await axios.get(CoinList(currency));
+        setCoins(data);
+        setLoading(false);
+      };
     fetchData();
   }, [currency]);
 

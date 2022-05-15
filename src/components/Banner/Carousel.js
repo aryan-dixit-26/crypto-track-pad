@@ -29,10 +29,7 @@ const Carousel = () => {
   const [trending, setTrending] = useState([]);
   const classes = useStyles();
   const { currency, symbol } = useContext(headerContext);
-  const fetchTrendingCoins = async () => {
-    const { data } = await axios.get(TrendingCoins(currency));
-    setTrending(() => data);
-  };
+
 
   const items = trending.map((coin) => {
     let profit = coin?.price_change_percentage_24h >= 0;
@@ -61,6 +58,11 @@ const Carousel = () => {
   });
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const fetchTrendingCoins = async () => {
+      const { data } = await axios.get(TrendingCoins(currency));
+      setTrending(() => data);
+    };
     fetchTrendingCoins();
   }, [currency]);
 

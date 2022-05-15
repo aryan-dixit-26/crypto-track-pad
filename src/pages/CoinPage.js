@@ -30,7 +30,8 @@ const useStyles = makeStyles((theme) => ({
   heading : {
     fontWeight : "bold",
     marginBottom : 20,
-    fontFamily : "Montserrat"
+    fontFamily : "Montserrat",
+    textAlign : "center"
   },
   desc : {
     width : "100%",
@@ -72,6 +73,7 @@ const CoinPage = () => {
   };
 
   useEffect(() => {
+       // eslint-disable-next-line react-hooks/exhaustive-deps
     fetchData();
   });
 
