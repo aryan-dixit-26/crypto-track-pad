@@ -39,7 +39,7 @@ const Carousel = () => {
 
     return (
       <Link to={`/coins/${coin?.id}`} className={classes.CarouselItem}>
-        <img src={coin.image} height={80} style={{ marginBottom: 10 }} />
+        <img src={coin.image} height={80} style={{ marginBottom: 10 }}  alt={coin.name}/>
         <span>
           {coin.symbol}
           &nbsp;
