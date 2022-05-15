@@ -13,6 +13,7 @@ import {
   TableCell,
   TableBody,
 } from "@material-ui/core";
+import Pagination from "@material-ui/lab/Pagination";
 import React, { useContext, useState, useEffect } from "react";
 import { CoinList } from "../config/api";
 import headerContext from "../contexts/headerContext";
@@ -39,6 +40,11 @@ const useStyles = makeStyles(() => ({
     },
     fontFamily: "Montserrat",
   },
+  pagination : {
+    "& .MuiPaginationItem-root": {
+        color: "gold",
+      },
+  }
 }));
 
 const CoinsTable = () => {
@@ -46,6 +52,7 @@ const CoinsTable = () => {
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
   const { currency, symbol } = useContext(headerContext);
+  const [page, setPage] = useState(1);
   const classes = useStyles();
   const navigate = useNavigate();
   const fetchData = async () => {
@@ -111,7 +118,9 @@ const CoinsTable = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {handleSearch().map((row) => {
+                {handleSearch()
+                .slice((page - 1) * 10, (page - 1) * 10 + 10)
+                .map((row) => {
                     let profit = row.price_change_percentage_24h >= 0;
                   return (
                     <TableRow
@@ -178,6 +187,24 @@ const CoinsTable = () => {
             </Table>
           )}
         </TableContainer>
+                <Pagination 
+                 count={(handleSearch().length / 10).toFixed(0)}
+                 style={{
+                    padding: 20,
+                    width: "100%",
+                    display: "flex",
+                    justifyContent: "center",
+                  }}
+                  classes = {{ul : classes.pagination}}
+                  onChange={(_,value) =>{
+                      setPage(value)
+                      window.scroll({
+                          left : 0,
+                          top: 450,
+                          behaviour : "smooth"
+                      })
+                  }}
+                 />
       </Container>
     </ThemeProvider>
   );
